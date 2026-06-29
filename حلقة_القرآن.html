@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>يُنعشني إنجازي 🍹</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<style>
+/* ═══ DESIGN TOKENS ══════════════════════════════════════════════════════ */
+:root{
+  --t:#0d9488;--tl:#14b8a6;--tll:#5eead4;--tp:#ccfbf1;
+  --c:#f97316;--cl:#fb923c;--a:#f59e0b;
+  --tx:#0f3532;--mu:#5e8a86;
+  --card:rgba(255,255,255,.88);--cb:rgba(255,255,255,.6);
+  --sh:0 2px 16px rgba(13,148,136,.12),0 1px 3px rgba(0,0,0,.05);
+  --shh:0 8px 32px rgba(13,148,136,.2),0 2px 8px rgba(0,0,0,.08);
+  --nav-h:68px;
+  --r:20px; /* base radius */
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+
+/* ── BG ─────────────────────────────────────── */
+body{
+  font-family:'Tajawal',sans-serif;min-height:100svh;direction:rtl;overflow-x:hidden;
+  background:linear-gradient(160deg,#e0fdf4,#ccfbf1,#d1fae5,#ecfdf5,#fef9c3,#fde68a,#fed7aa);
+  background-size:400% 400%;animation:bgA 18s ease infinite;
+}
+@keyframes bgA{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+/* orbs — smaller & contained */
+.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;}
+.o1{width:300px;height:300px;top:-80px;right:-80px;
+  background:radial-gradient(circle,rgba(13,148,136,.28),transparent 70%);
+  animation:o1a 12s ease-in-out infinite;}
+.o2{width:260px;height:260px;bottom:-70px;left:-70px;
+  background:radial-gradient(circle,rgba(249,115,22,.2),transparent 70%);
+  animation:o1a 15s ease-in-out infinite reverse;}
+.o3{display:none;}
+@keyframes o1a{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+/* floating emojis — hidden on mobile, subtle on desktop */
+.flt{display:none;}
+
+/* ── LAYOUT ──────────────────────────────────── */
+.view{display:none;}.view.active{display:block;}
+.wrap{
+  max-width:520px;margin:0 auto;
+  padding:0 14px calc(var(--nav-h) + 16px + env(safe-area-inset-bottom));
+  position:relative;z-index:1;
+}
+.lwrap{max-width:420px;margin:0 auto;padding:16px 16px 40px;position:relative;z-index:1;}
+
+/* ── LOGIN ───────────────────────────────────── */
+.lhero{text-align:center;padding:40px 0 24px;}
+.hero-ring{
+  width:100px;height:100px;
+  background:linear-gradient(145deg,var(--t),var(--tl));
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:52px;margin:0 auto 16px;
+  box-shadow:0 6px 28px rgba(13,148,136,.4),0 0 0 8px rgba(13,148,136,.1);
+  animation:pulse 2.8s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{box-shadow:0 6px 28px rgba(13,148,136,.4),0 0 0 8px rgba(13,148,136,.1)}
+  50%{box-shadow:0 6px 28px rgba(13,148,136,.5),0 0 0 16px rgba(13,148,136,.06)}
+}
+.htitle{
+  font-size:30px;font-weight:900;line-height:1.1;margin-bottom:6px;
+  background:linear-gradient(135deg,var(--t),var(--c));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hsub{color:var(--t);font-size:13px;font-weight:600;}
+
+/* ── CARD ────────────────────────────────────── */
+.card{
+  background:var(--card);
+  backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);
+  border-radius:var(--r);padding:18px;margin-bottom:12px;
+  box-shadow:var(--sh);border:1.5px solid var(--cb);
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0;
+  background:linear-gradient(90deg,var(--t),var(--tl),var(--a),var(--c));
+}
+.ctitle{font-size:16px;font-weight:800;color:var(--tx);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+
+/* ── BUTTONS ─────────────────────────────────── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:14px 22px;border-radius:14px;font-family:'Tajawal',sans-serif;
+  font-size:15px;font-weight:700;border:none;cursor:pointer;min-height:50px;
+  transition:all .18s cubic-bezier(.4,0,.2,1);
+  -webkit-user-select:none;user-select:none;
+}
+.bf{width:100%;}
+.bt{background:linear-gradient(135deg,var(--t),var(--tl));color:#fff;
+  box-shadow:0 4px 16px rgba(13,148,136,.38);}
+.bt:active{transform:scale(.97);opacity:.9;}
+.bc{background:linear-gradient(135deg,var(--c),var(--cl));color:#fff;
+  box-shadow:0 4px 16px rgba(249,115,22,.32);}
+.bc:active{transform:scale(.97);}
+.bg{background:rgba(255,255,255,.7);border:1.5px solid rgba(13,148,136,.28);color:var(--t);}
+.bg:active{background:var(--tp);}
+.bsm{padding:8px 14px;font-size:13px;border-radius:10px;min-height:36px;}
+
+/* ── FORMS ───────────────────────────────────── */
+.fg{margin-bottom:13px;}
+.fl{display:block;font-size:12px;font-weight:700;color:var(--t);margin-bottom:5px;}
+.fi{
+  width:100%;padding:13px 15px;border:1.5px solid rgba(13,148,136,.22);border-radius:13px;
+  font-family:'Tajawal',sans-serif;font-size:15px;color:var(--tx);
+  background:rgba(255,255,255,.9);direction:rtl;
+  -webkit-appearance:none;appearance:none;
+}
+.fi:focus{outline:none;border-color:var(--tl);box-shadow:0 0 0 3px rgba(20,184,166,.15);}
+.fi::placeholder{color:#9db8b5;}
+
+/* ── TABS ────────────────────────────────────── */
+.tabs{display:flex;gap:5px;background:rgba(204,251,241,.6);border-radius:13px;padding:4px;margin-bottom:14px;}
+.tabbtn{flex:1;padding:9px;border:none;border-radius:10px;font-family:'Tajawal',sans-serif;
+  font-size:14px;font-weight:700;cursor:pointer;background:transparent;color:var(--t);transition:all .18s;}
+.tabbtn.active{background:var(--t);color:#fff;box-shadow:0 2px 10px rgba(13,148,136,.3);}
+
+/* ── BOTTOM NAV ──────────────────────────────── */
+.bnav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(32px) saturate(180%);-webkit-backdrop-filter:blur(32px) saturate(180%);
+  border-top:1px solid rgba(13,148,136,.08);
+  display:flex;z-index:200;
+  height:calc(var(--nav-h) + env(safe-area-inset-bottom));
+  padding:6px 8px;
+  padding-bottom:calc(6px + env(safe-area-inset-bottom));
+  box-shadow:0 -2px 20px rgba(13,148,136,.08);
+}
+.nbtn{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  padding:6px 4px;cursor:pointer;border:none;background:transparent;color:#94b8b5;
+  font-family:'Tajawal',sans-serif;font-size:10px;font-weight:700;
+  border-radius:14px;transition:all .2s;position:relative;
+}
+.nbtn.active{color:var(--t);}
+.nbtn.active .ni-wrap{
+  background:linear-gradient(135deg,rgba(13,148,136,.12),rgba(20,184,166,.08));
+  border-radius:12px;transform:scale(1.05);
+}
+.ni-wrap{padding:4px 16px;border-radius:12px;transition:all .2s;}
+.ni{font-size:22px;line-height:1;display:block;}
+
+/* ── PAGE HEADER ─────────────────────────────── */
+.vhdr{padding:16px 0 6px;text-align:center;}
+.vht{font-size:24px;font-weight:900;color:var(--tx);}
+.vhs{font-size:12px;color:var(--mu);font-weight:500;margin-top:2px;}
+.vhdr-inner{}
+
+/* ── BANNERS ─────────────────────────────────── */
+.banner{
+  padding:13px 15px;border-radius:16px;margin-bottom:12px;
+  font-size:13.5px;font-weight:600;line-height:1.5;
+  display:flex;align-items:flex-start;gap:10px;
+}
+.bi{font-size:26px;flex-shrink:0;line-height:1.2;}
+.b-task{background:linear-gradient(135deg,rgba(204,251,241,.9),rgba(167,243,208,.75));border:1.5px solid rgba(20,184,166,.3);color:var(--tx);}
+.b-review{background:linear-gradient(135deg,rgba(237,233,254,.9),rgba(221,214,254,.75));border:1.5px solid rgba(167,139,250,.3);color:#4c1d95;}
+.b-rest{background:linear-gradient(135deg,rgba(254,252,232,.95),rgba(254,249,195,.85));border:1.5px solid rgba(251,191,36,.3);color:#78350f;}
+.b-exam{background:linear-gradient(135deg,rgba(254,226,226,.9),rgba(254,202,202,.75));border:1.5px solid rgba(252,165,165,.3);color:#7f1d1d;}
+.b-before{background:linear-gradient(135deg,rgba(240,253,244,.95),rgba(220,252,231,.85));border:1.5px solid rgba(134,239,172,.3);color:#14532d;}
+.b-after{background:linear-gradient(135deg,rgba(241,245,249,.9),rgba(226,232,240,.8));border:1.5px solid rgba(203,213,225,.3);color:#334155;}
+
+/* ── TASK ITEMS ──────────────────────────────── */
+.titem{
+  border-radius:16px;padding:13px 14px;margin-bottom:9px;
+  border:1.5px solid rgba(13,148,136,.1);background:rgba(255,255,255,.8);
+  backdrop-filter:blur(10px);transition:all .25s cubic-bezier(.4,0,.2,1);
+}
+.titem.done{
+  border-color:var(--tl);
+  background:linear-gradient(135deg,rgba(204,251,241,.75),rgba(167,243,208,.55));
+  box-shadow:0 3px 14px rgba(13,148,136,.14);
+}
+.thdr{display:flex;align-items:center;gap:11px;cursor:pointer;margin-bottom:9px;min-height:44px;}
+.tico{
+  width:44px;height:44px;border-radius:12px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  background:rgba(255,255,255,.9);
+  box-shadow:0 2px 8px rgba(13,148,136,.1);border:1px solid rgba(255,255,255,.8);
+}
+.titem.done .tico{background:rgba(204,251,241,.9);}
+.tnw{flex:1;min-width:0;}
+.tn{font-size:15px;font-weight:700;color:var(--tx);line-height:1.3;}
+.tds{font-size:11.5px;color:var(--mu);margin-top:2px;line-height:1.4;}
+.tchk{
+  width:32px;height:32px;min-width:32px;border-radius:50%;
+  border:2px solid rgba(13,148,136,.3);
+  display:flex;align-items:center;justify-content:center;
+  background:#fff;font-size:14px;color:transparent;
+  transition:all .3s cubic-bezier(.68,-.55,.265,1.55);
+}
+.titem.done .tchk{
+  background:var(--t);border-color:var(--t);color:#fff;
+  box-shadow:0 0 0 4px rgba(13,148,136,.18);transform:scale(1.15);
+}
+.tno{
+  width:100%;padding:10px 13px;border:1.5px solid rgba(13,148,136,.14);border-radius:11px;
+  font-family:'Tajawal',sans-serif;font-size:14px;color:var(--tx);
+  background:rgba(255,255,255,.85);resize:none;min-height:52px;direction:rtl;
+}
+.tno:focus{outline:none;border-color:var(--tl);box-shadow:0 0 0 3px rgba(20,184,166,.12);}
+.tno::placeholder{color:#a8c5c2;}
+
+/* ── SCORE RING ──────────────────────────────── */
+.srw{display:flex;flex-direction:column;align-items:center;padding:6px 0 4px;position:relative;}
+.ssvg{width:160px;height:160px;filter:drop-shadow(0 5px 18px rgba(13,148,136,.25));}
+.sctr{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.snum{font-size:40px;font-weight:900;color:var(--tx);line-height:1;}
+.slbl{font-size:11.5px;color:var(--mu);font-weight:600;margin-top:2px;}
+
+/* ── STAT GRID ───────────────────────────────── */
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px;}
+.spill{
+  background:linear-gradient(135deg,rgba(204,251,241,.7),rgba(224,242,254,.6));
+  border-radius:14px;padding:13px;text-align:center;
+  border:1.5px solid rgba(20,184,166,.2);
+}
+.spill .sv{font-size:28px;font-weight:900;color:var(--t);}
+.spill .sl{font-size:11.5px;color:var(--mu);font-weight:600;margin-top:2px;}
+.spill .so{font-size:10.5px;color:#a0aec0;}
+
+/* ── PROGRESS ────────────────────────────────── */
+.pgbar{height:7px;background:rgba(204,251,241,.7);border-radius:5px;overflow:hidden;margin:4px 0;}
+.pgfill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--t),var(--tl),var(--a));transition:width .8s cubic-bezier(.4,0,.2,1);}
+
+/* ── WEEK BADGES ─────────────────────────────── */
+.wbadges{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px;scrollbar-width:none;}
+.wbadges::-webkit-scrollbar{display:none;}
+.wbdg{
+  flex-shrink:0;padding:7px 15px;border-radius:999px;font-size:12.5px;font-weight:700;
+  cursor:pointer;border:1.5px solid rgba(20,184,166,.25);color:var(--t);
+  background:rgba(255,255,255,.75);white-space:nowrap;min-height:34px;
+  transition:all .18s;
+}
+.wbdg.active{background:var(--t);color:#fff;border-color:var(--t);box-shadow:0 3px 12px rgba(13,148,136,.3);}
+
+/* ── LEADERBOARD ─────────────────────────────── */
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:8px;padding:4px 0 16px;}
+.pit{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;max-width:108px;}
+.pav{
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:900;color:#fff;border:3px solid rgba(255,255,255,.8);
+  box-shadow:0 3px 14px rgba(0,0,0,.12);width:46px;height:46px;transition:transform .2s;
+}
+.pit.p1 .pav{width:58px;height:58px;font-size:24px;background:linear-gradient(145deg,#f59e0b,#fbbf24);box-shadow:0 5px 22px rgba(245,158,11,.4);}
+.pit.p2 .pav{background:linear-gradient(145deg,#94a3b8,#cbd5e1);}
+.pit.p3 .pav{background:linear-gradient(145deg,#f97316,#fb923c);}
+.pmed{font-size:22px;}
+.pnm{font-size:12px;font-weight:700;color:var(--tx);text-align:center;line-height:1.3;}
+.psc{font-size:20px;font-weight:900;color:var(--t);}
+.pbar{width:100%;border-radius:8px 8px 0 0;}
+.pit.p1 .pbar{height:72px;background:linear-gradient(180deg,rgba(251,191,36,.25),rgba(251,191,36,.05));}
+.pit.p2 .pbar{height:52px;background:linear-gradient(180deg,rgba(148,163,184,.25),rgba(148,163,184,.05));}
+.pit.p3 .pbar{height:40px;background:linear-gradient(180deg,rgba(249,115,22,.25),rgba(249,115,22,.05));}
+
+.lbitem{
+  display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:14px;margin-bottom:7px;
+  background:rgba(255,255,255,.75);border:1.5px solid rgba(13,148,136,.08);
+}
+.lbitem.me{background:linear-gradient(135deg,rgba(204,251,241,.8),rgba(167,243,208,.55));border-color:var(--tl);box-shadow:0 0 0 2.5px rgba(20,184,166,.18);}
+.lbrank{width:28px;height:28px;border-radius:50%;background:var(--t);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;flex-shrink:0;}
+.lbav{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--t),var(--tl));display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:800;flex-shrink:0;}
+.lbinf{flex:1;min-width:0;}
+.lbnm{font-size:14px;font-weight:700;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lbbar-w{margin-top:4px;height:4px;background:rgba(13,148,136,.1);border-radius:3px;overflow:hidden;}
+.lbbar-f{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--t),var(--tl));}
+.lbsr{text-align:center;flex-shrink:0;}
+.lbnum{font-size:19px;font-weight:900;color:var(--t);}
+.lbden{font-size:10px;color:var(--mu);}
+
+/* ── BADGES & CHIPS ──────────────────────────── */
+.bstar{
+  display:inline-block;background:linear-gradient(135deg,var(--a),var(--c));
+  color:#fff;padding:2px 9px;border-radius:999px;font-size:10.5px;font-weight:700;
+  animation:shim 2s ease infinite;
+}
+@keyframes shim{0%,100%{box-shadow:0 2px 8px rgba(245,158,11,.3)}50%{box-shadow:0 2px 16px rgba(245,158,11,.55)}}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:700;}
+.cht{background:var(--t);color:#fff;}
+.chg{background:#e2e8f0;color:#475569;}
+
+/* ── INFO ROWS ───────────────────────────────── */
+.irow{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(13,148,136,.07);font-size:13.5px;color:var(--tx);}
+.irow:last-child{border-bottom:none;}
+.ilbl{color:var(--mu);font-size:11.5px;margin-top:2px;}
+
+/* ── SUPERVISOR TABLE ────────────────────────── */
+.stblw{overflow-x:auto;border-radius:14px;-webkit-overflow-scrolling:touch;}
+.stblw::after{
+  content:'← مرر';position:sticky;left:0;
+  display:block;text-align:center;font-size:11px;color:var(--mu);
+  padding:4px;opacity:.6;
+}
+.stbl{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px;min-width:480px;}
+.stbl th{background:linear-gradient(135deg,var(--t),var(--tl));color:#fff;padding:10px 8px;text-align:center;font-weight:700;font-size:12px;}
+.stbl th:first-child{border-radius:14px 0 0 0;text-align:right;padding-right:12px;}
+.stbl th:last-child{border-radius:0 14px 0 0;}
+.stbl td{padding:9px 8px;text-align:center;border-bottom:1px solid rgba(13,148,136,.06);color:var(--tx);background:rgba(255,255,255,.55);}
+.stbl td:first-child{text-align:right;font-weight:700;padding-right:12px;}
+.stbl tr:last-child td{border-bottom:none;}
+.stbl tr:nth-child(even) td{background:rgba(204,251,241,.2);}
+.sd{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:22px;border-radius:999px;font-size:11.5px;font-weight:800;padding:0 5px;}
+.sd.full{background:rgba(13,148,136,.14);color:var(--t);}
+.sd.part{background:rgba(249,115,22,.12);color:var(--c);}
+.sd.miss{background:rgba(226,232,240,.9);color:#94a3b8;}
+
+/* ── EXAM INPUT ──────────────────────────────── */
+.exi{width:60px;padding:8px;border:1.5px solid rgba(13,148,136,.2);border-radius:10px;
+  font-family:'Tajawal',sans-serif;font-size:16px;font-weight:700;text-align:center;
+  color:var(--tx);background:rgba(255,255,255,.9);-webkit-appearance:none;}
+.exi:focus{outline:none;border-color:var(--tl);}
+
+/* ── MODAL ───────────────────────────────────── */
+.mov{
+  position:fixed;inset:0;background:rgba(10,38,40,.55);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  display:flex;align-items:flex-end;justify-content:center;
+  z-index:1000;padding:0;animation:fIn .2s ease;
+}
+@keyframes fIn{from{opacity:0}to{opacity:1}}
+.mbox{
+  background:rgba(255,255,255,.98);border-radius:24px 24px 0 0;
+  padding:22px 20px;width:100%;max-width:520px;max-height:88svh;overflow-y:auto;
+  box-shadow:0 -8px 40px rgba(10,38,40,.2);
+  animation:sUp .3s cubic-bezier(.34,1.56,.64,1);
+  padding-bottom:calc(22px + env(safe-area-inset-bottom));
+}
+.mbox::before{
+  content:'';display:block;width:36px;height:4px;
+  background:rgba(13,148,136,.2);border-radius:2px;
+  margin:0 auto 18px;
+}
+@keyframes sUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+
+/* ── EXPORT CARD ─────────────────────────────── */
+#xcard{
+  position:fixed;left:-9999px;top:0;width:420px;min-height:560px;padding:32px;
+  background:linear-gradient(155deg,#0a2628 0%,#0d9488 45%,#0891b2 82%,#1a3050 100%);
+  font-family:'Tajawal',sans-serif;direction:rtl;border-radius:28px;
+}
+.xhd{text-align:center;color:#fff;margin-bottom:22px;}
+.xt{font-size:24px;font-weight:900;margin-bottom:8px;}
+.xnm{display:inline-block;background:rgba(255,255,255,.18);padding:6px 18px;border-radius:999px;font-size:16px;font-weight:700;margin-bottom:6px;}
+.xme{font-size:12.5px;opacity:.82;}
+.xts{background:rgba(255,255,255,.13);border-radius:18px;padding:16px;margin-top:4px;}
+.xtk{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.15);color:#fff;}
+.xtk:last-child{border-bottom:none;}
+.xti{font-size:22px;flex-shrink:0;}
+.xti2{flex:1;}
+.xtn{font-size:14px;font-weight:700;}
+.xtno{font-size:12px;opacity:.78;margin-top:2px;}
+.xck{font-size:18px;flex-shrink:0;}
+.xff{text-align:center;color:#fff;margin-top:18px;font-size:18px;font-weight:800;}
+.xfs{font-size:11px;opacity:.65;margin-top:5px;font-weight:400;}
+
+/* ── TOAST ───────────────────────────────────── */
+#toast{
+  position:fixed;bottom:calc(var(--nav-h) + 12px + env(safe-area-inset-bottom));
+  left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,var(--tx),#0f6b64);
+  color:#fff;padding:11px 22px;border-radius:999px;
+  font-size:14px;font-weight:700;z-index:9999;
+  box-shadow:0 4px 20px rgba(13,148,136,.4);
+  white-space:nowrap;
+  animation:tIn .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes tIn{from{transform:translateX(-50%) translateY(20px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}
+.hidden{display:none!important;}
+
+/* ── DESKTOP ENHANCEMENTS ────────────────────── */
+@media(min-width:540px){
+  .flt{display:block;position:fixed;pointer-events:none;z-index:0;opacity:.15;
+    animation:fltD 9s ease-in-out infinite;user-select:none;}
+  .flt:nth-child(1){font-size:44px;top:4%;right:6%;animation-delay:0s;}
+  .flt:nth-child(2){font-size:60px;top:14%;left:3%;animation-delay:-2s;}
+  .flt:nth-child(3){font-size:38px;top:52%;right:2%;animation-delay:-4s;}
+  .flt:nth-child(4){font-size:50px;bottom:28%;left:4%;animation-delay:-1s;}
+  .flt:nth-child(5){font-size:42px;bottom:6%;right:12%;animation-delay:-3s;}
+  .flt:nth-child(6){display:none;}.flt:nth-child(7){display:none;}
+  @keyframes fltD{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-16px) rotate(7deg)}}
+  .o1{width:420px;height:420px;}.o2{width:360px;height:360px;}
+  .htitle{font-size:34px;}
+  .vht{font-size:26px;}
+}
+</style>
+</head>
+<body>
+
+<!-- Orbs -->
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+<!-- Floating emojis -->
+<div class="flt">🌊</div><div class="flt">🌴</div><div class="flt">🍹</div>
+<div class="flt">🥭</div><div class="flt">☀️</div><div class="flt">🌺</div><div class="flt">🍉</div>
+
+<!-- ═══════════ LOADING ═══════════ -->
+<div id="vLoading" class="view active" style="display:flex!important;flex-direction:column;align-items:center;justify-content:center;min-height:100svh;text-align:center;padding:20px;position:relative;z-index:1;">
+  <div style="font-size:64px;margin-bottom:16px;animation:pulse 1.5s ease-in-out infinite;">🍹</div>
+  <div style="font-size:22px;font-weight:900;color:var(--tx);margin-bottom:8px;">يُنعشني إنجازي</div>
+  <div id="loadMsg" style="font-size:14px;color:var(--mu);">جاري الاتصال...</div>
+</div>
+
+<!-- ═══════════ LOGIN ═══════════ -->
+<div id="vLogin" class="view">
+<div class="lwrap">
+  <div class="lhero">
+    <div class="hero-ring">🍹</div>
+    <div class="htitle">يُنعشني إنجازي</div>
+    <div class="hsub">حلقة مراجعة القرآن الكريم ١٤٤٧هـ</div>
+  </div>
+  <div class="card">
+    <div class="tabs">
+      <button class="tabbtn active" onclick="swTab('l')">دخول</button>
+      <button class="tabbtn" onclick="swTab('r')">حساب جديد</button>
+    </div>
+    <!-- Login -->
+    <div id="fL">
+      <div class="fg"><label class="fl">📱 اسم المستخدم</label><input id="lU" class="fi" placeholder="أدخلي اسمك" autocomplete="username"></div>
+      <div class="fg"><label class="fl">🔒 كلمة المرور</label><input id="lP" type="password" class="fi" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="btn bt bf" onclick="doLogin()">دخول ☀️</button>
+      <div id="lE" class="hidden" style="color:#ef4444;font-size:13px;margin-top:9px;text-align:center;"></div>
+    </div>
+    <!-- Register -->
+    <div id="fR" class="hidden">
+      <div class="fg"><label class="fl">✨ الاسم الكامل</label><input id="rN" class="fi" placeholder="اسمك الكامل"></div>
+      <div class="fg"><label class="fl">📱 اسم مستخدم للدخول</label><input id="rU" class="fi" placeholder="بدون مسافات"></div>
+      <div class="fg"><label class="fl">🔒 كلمة المرور</label><input id="rP" type="password" class="fi" placeholder="٤ أحرف على الأقل"></div>
+      <div class="fg"><label class="fl">👤 نوع الحساب</label>
+        <select id="rR" class="fi" onchange="togSup()">
+          <option value="hafiza">حافظة 📖</option>
+          <option value="supervisor">مشرفة 🌟</option>
+        </select></div>
+      <div id="scG" class="fg hidden"><label class="fl">🔑 كود المشرفة</label><input id="rC" type="password" class="fi" placeholder="أدخلي كود المشرفة"></div>
+      <button class="btn bc bf" onclick="doReg()">إنشاء الحساب 🎉</button>
+      <div id="rE" class="hidden" style="color:#ef4444;font-size:13px;margin-top:9px;text-align:center;"></div>
+    </div>
+  </div>
+  <div style="text-align:center;color:var(--mu);font-size:12px;margin-top:10px;">📅 من ٢٨ يونيو حتى ١ أغسطس ٢٠٢٦</div>
+</div>
+</div>
+
+<!-- ═══════════ HAFIZA ═══════════ -->
+<div id="vHf" class="view">
+<div class="wrap">
+  <div class="vhdr"><div class="vht" id="hfW">🌊 أهلاً!</div><div class="vhs" id="hfD"></div></div>
+  <div id="tabTasks"></div>
+  <div id="tabScore" class="hidden"></div>
+  <div id="tabLeader" class="hidden"></div>
+</div>
+<nav class="bnav">
+  <button class="nbtn active" id="bnT" onclick="hfTab('Tasks')"><span class="ni">📝</span>مهامي</button>
+  <button class="nbtn" id="bnS" onclick="hfTab('Score')"><span class="ni">⭐</span>درجاتي</button>
+  <button class="nbtn" id="bnL" onclick="hfTab('Leader')"><span class="ni">🏆</span>المتصدرات</button>
+  <button class="nbtn" onclick="logout()"><span class="ni">🚪</span>خروج</button>
+</nav>
+</div>
+
+<!-- ═══════════ SUPERVISOR ═══════════ -->
+<div id="vSup" class="view">
+<div class="wrap">
+  <div class="vhdr"><div class="vht">🌟 لوحة المشرفة</div><div class="vhs" id="sD"></div></div>
+  <div id="stabOv"></div>
+  <div id="stabEx" class="hidden"></div>
+  <div id="stabLb" class="hidden"></div>
+  <div id="stabAd" class="hidden"></div>
+</div>
+<nav class="bnav">
+  <button class="nbtn active" id="sbnOv" onclick="supTab('Ov')"><span class="ni">📊</span>الحافظات</button>
+  <button class="nbtn" id="sbnEx" onclick="supTab('Ex')"><span class="ni">📝</span>الاختبارات</button>
+  <button class="nbtn" id="sbnLb" onclick="supTab('Lb')"><span class="ni">🏆</span>المتصدرات</button>
+  <button class="nbtn hidden" id="sbnAd" onclick="supTab('Ad')"><span class="ni">⚙️</span>إدارة</button>
+  <button class="nbtn" onclick="logout()"><span class="ni">🚪</span>خروج</button>
+</nav>
+</div>
+
+<!-- Modal -->
+<div id="mov" class="mov hidden" onclick="closeMod()"><div class="mbox" onclick="event.stopPropagation()"><div id="mbody"></div></div></div>
+<!-- Export card -->
+<div id="xcard"></div>
+<!-- Toast -->
+<div id="toast" class="hidden"></div>
+
+<script>
+/* ─── FIREBASE ─── */
+firebase.initializeApp({
+  apiKey:"AIzaSyClFXETV5rNX5-zTAr0oW09bLLnkG016Kk",
+  authDomain:"quran-3hd.firebaseapp.com",
+  projectId:"quran-3hd",
+  storageBucket:"quran-3hd.firebasestorage.app",
+  messagingSenderId:"732760853628",
+  appId:"1:732760853628:web:b41cdfe0e05397a6414df9"
+});
+const db=firebase.firestore();
+db.settings({experimentalForceLongPolling:true,merge:true});
+
+/* ─── LOCAL CACHE (sync access) ─── */
+let _data={users:{},entries:{},exams:{}};
+function getData(){return _data;}
+
+/* ─── FIRESTORE HELPERS ─── */
+async function fsSet(col,key,val){_data[col][key]=val;await db.collection(col).doc(key).set(val);}
+async function fsDel(col,key){delete _data[col][key];await db.collection(col).doc(key).delete();}
+
+/* ─── INIT ─── */
+async function initApp(){
+  const tout=setTimeout(()=>{
+    const lm=document.getElementById('loadMsg');
+    if(lm)lm.innerHTML='⏱️ الاتصال بطيء جداً<br>تأكدي من:<br>١. الإنترنت شغّال<br>٢. Rules في Firebase = allow read, write: if true';
+  },8000);
+  try{
+    const to=t=>new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),15000)).catch(e=>{throw e;});
+    const[uS,eS,xS]=await Promise.race([
+      Promise.all([
+        db.collection('users').get(),
+        db.collection('entries').get(),
+        db.collection('exams').get()
+      ]),
+      new Promise((_,r)=>setTimeout(()=>r(new Error('timeout: Firebase لم يستجب بعد 15 ثانية — تحققي من الـ Rules')),15000))
+    ]);
+    clearTimeout(tout);
+    uS.forEach(d=>_data.users[d.id]=d.data());
+    eS.forEach(d=>_data.entries[d.id]=d.data());
+    xS.forEach(d=>_data.exams[d.id]=d.data());
+    // Seed admin on first run
+    if(!Object.values(_data.users).some(u=>u.username==='admin')){
+      const adm={id:'s0',name:'المشرفة الرئيسية',username:'admin',password:'admin123',role:'supervisor',createdAt:ts()};
+      await db.collection('users').doc('s0').set(adm);
+      _data.users['s0']=adm;
+    }
+    await autoZeroAbsents();
+    document.getElementById('vLoading').classList.remove('active');
+    showView('vLogin');
+  }catch(e){
+    console.error(e);
+    document.getElementById('loadMsg').textContent='❌ '+(e.code||e.name)+': '+e.message;
+  }
+}
+
+/* ─── CONFIG ─── */
+const START=new Date('2026-06-28T00:00:00');
+const WEEKS=5;
+const SUP_CODE='مشرف2026';
+const CIRC=339.292;
+
+const TASKS=[
+  {id:'t1',name:'السرد الذاتي',icon:'🥭',desc:'عن طريق التسجيل الصوتي أو الورقة (شرط)'},
+  {id:'t2',name:'السرد على الرفيقة',icon:'🥝',desc:'بدون أخطاء، وإذا حصل خطأ يُعاد الوجه من بدايته'},
+  {id:'t3',name:'التكرار ٣ مرات',icon:'🍉',desc:'بعد سرد الرفيقة'},
+  {id:'t4',name:'ورد الصلاة',icon:'🍍',desc:'قراءة ما تم حفظه اليوم بأي صلاة'},
+  {id:'t5',name:'السرد التراكمي',icon:'🥥',desc:'تسجيل أو بالورقة (وإذا ودك على رفيقة ما فيه مشكلة)'}
+];
+const DAR=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const MAR=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const ts=()=>new Date().toISOString();
+const uid=()=>'u'+Math.random().toString(36).substr(2,8)+Date.now();
+
+/* ─── AUTH ─── */
+let me=null,tStates=[false,false,false,false,false];
+
+function doLogin(){
+  const u=v('lU').trim(),p=v('lP');
+  if(!u||!p){showErr('lE','يرجى تعبئة جميع الحقول');return;}
+  const user=Object.values(_data.users).find(x=>x.username===u&&x.password===p);
+  if(!user){showErr('lE','❌ اسم المستخدم أو كلمة المرور غير صحيحة');return;}
+  me=user;user.role==='supervisor'?showSup():showHf();
+}
+async function doReg(){
+  const name=v('rN').trim(),uname=v('rU').trim(),pass=v('rP'),role=v('rR'),code=v('rC');
+  if(!name||!uname||!pass){showErr('rE','يرجى تعبئة جميع الحقول');return;}
+  if(uname.includes(' ')){showErr('rE','اسم المستخدم بدون مسافات');return;}
+  if(pass.length<4){showErr('rE','كلمة المرور ٤ أحرف على الأقل');return;}
+  if(role==='supervisor'&&code!==SUP_CODE){showErr('rE','❌ كود المشرفة غير صحيح');return;}
+  if(Object.values(_data.users).some(x=>x.username===uname)){showErr('rE','❌ اسم المستخدم مستخدم');return;}
+  const id=uid();
+  const userData={id,name,username:uname,password:pass,role,createdAt:ts()};
+  try{
+    await fsSet('users',id,userData);
+    me=userData;toast('🎉 تم إنشاء الحساب!');
+    setTimeout(()=>role==='supervisor'?showSup():showHf(),600);
+  }catch(e){showErr('rE','❌ خطأ في الاتصال، حاولي مرة ثانية');}
+}
+function logout(){me=null;tStates=[false,false,false,false,false];showView('vLogin');}
+
+/* ─── DATE HELPERS ─── */
+function getEffectiveDate(){
+  // Before 5 PM → treat as yesterday (grace period for late submitters)
+  const now=new Date();
+  const cutoff=new Date(now);cutoff.setHours(17,0,0,0);
+  if(now<cutoff){const y=new Date(now);y.setDate(y.getDate()-1);return y;}
+  return now;
+}
+function dayInfo(date){
+  const d0=new Date(START);d0.setHours(0,0,0,0);
+  const d1=new Date(date);d1.setHours(0,0,0,0);
+  const diff=Math.floor((d1-d0)/86400000);
+  if(diff<0)return{status:'before',week:0};
+  if(diff>=35)return{status:'after',week:6};
+  const week=Math.floor(diff/7)+1,dow=d1.getDay();
+  const status=dow<=3?'task':dow===4?'review':dow===5?'rest':'exam';
+  return{status,week,dow,taskDay:dow<=3?dow+1:null};
+}
+function wkStart(w){const d=new Date(START);d.setDate(d.getDate()+(w-1)*7);return d;}
+function taskDate(w,td){const d=wkStart(w);d.setDate(d.getDate()+(td-1));return d;}
+function fmtD(d){return`${DAR[d.getDay()]} ${d.getDate()} ${MAR[d.getMonth()]}`;}
+function dateStr(d){return d.toISOString().split('T')[0];}
+
+/* ─── MAX POSSIBLE SCORES (based on elapsed days) ─── */
+function calcMaxPossible(){
+  const now=new Date();now.setHours(0,0,0,0);
+  let max=0;
+  for(let w=1;w<=WEEKS;w++){
+    for(let d=1;d<=4;d++){const td=taskDate(w,d);if(td<=now)max+=5;}
+    const ed=wkStart(w);ed.setDate(ed.getDate()+6);
+    if(ed<=now)max+=10;
+  }
+  return max;
+}
+function calcWeekMax(w){
+  const now=new Date();now.setHours(0,0,0,0);
+  let max=0;
+  for(let d=1;d<=4;d++){const td=taskDate(w,d);if(td<=now)max+=5;}
+  const ed=wkStart(w);ed.setDate(ed.getDate()+6);
+  if(ed<=now)max+=10;
+  return max;
+}
+
+/* ─── SCORES ─── */
+function calcScores(uid_){
+  const data=getData(),now=new Date();now.setHours(0,0,0,0);
+  return Array.from({length:WEEKS},(_,i)=>{
+    const w=i+1;let tS=0,tM=0;
+    for(let d=1;d<=4;d++){
+      const td=taskDate(w,d);if(td>now)continue;
+      tM+=5;
+      const e=data.entries[`${uid_}_w${w}_d${d}`];
+      if(e&&e.submitted)tS+=e.tasks.filter(t=>t.c).length;
+    }
+    const ex=data.exams[`${uid_}_w${w}`];
+    const eS=ex!=null?ex.score:null;
+    return{w,tS,tM,eS,total:tS+(eS||0)};
+  });
+}
+function totalScore(uid_){return calcScores(uid_).reduce((s,x)=>s+x.total,0);}
+function allHafizat(){
+  const data=getData();
+  return Object.values(data.users).filter(u=>u.role==='hafiza')
+    .map(u=>({...u,scores:calcScores(u.id),total:totalScore(u.id)}))
+    .sort((a,b)=>b.total-a.total);
+}
+
+/* ─── VIEW SWITCHING ─── */
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function showHf(){
+  showView('vHf');
+  document.getElementById('hfW').textContent=`🌊 أهلاً ${me.name.split(' ')[0]}`;
+  document.getElementById('hfD').textContent=fmtD(new Date());
+  hfTab('Tasks');
+}
+function showSup(){
+  showView('vSup');
+  document.getElementById('sD').textContent=fmtD(new Date());
+  const adBtn=document.getElementById('sbnAd');
+  if(adBtn)adBtn.classList.toggle('hidden',me.username!=='admin');
+  supTab('Ov');
+}
+
+function hfTab(tab){
+  ['Tasks','Score','Leader'].forEach(t=>{
+    document.getElementById(`tab${t}`).classList.toggle('hidden',t!==tab);
+    document.getElementById(`bn${t[0]}`).classList.toggle('active',t===tab);
+  });
+  tStates=[false,false,false,false,false];
+  if(tab==='Tasks')renderTasks();
+  else if(tab==='Score')renderScores();
+  else renderHfLb();
+}
+function supTab(tab){
+  ['Ov','Ex','Lb','Ad'].forEach(t=>{
+    document.getElementById(`stab${t}`)?.classList.toggle('hidden',t!==tab);
+    document.getElementById(`sbn${t}`)?.classList.toggle('active',t===tab);
+  });
+  if(tab==='Ov')renderSupOv();
+  else if(tab==='Ex')renderSupEx();
+  else if(tab==='Lb')renderSupLb();
+  else if(tab==='Ad')renderAdmin();
+}
+
+/* ─── HAFIZA: TASKS ─── */
+function renderTasks(){
+  const el=document.getElementById('tabTasks');
+  const eff=getEffectiveDate();
+  const info=dayInfo(eff);
+  const isGrace=eff.toDateString()!==new Date().toDateString();
+  const bMap={
+    before:`<div class="banner b-before"><span class="bi">🌴</span><div>الحلقة تبدأ الأحد ٢٨ يونيو ٢٠٢٦ إن شاء الله — استعدي! 🌺</div></div>`,
+    after:`<div class="banner b-after"><span class="bi">🎉</span><div>انتهت الحلقة! جزاكم الله خيراً على مجهوداتكم 🌟</div></div>`,
+    review:`<div class="banner b-review"><span class="bi">📖</span><div><strong>يوم الخميس — يوم المراجعة 🌙</strong><br><span style="font-weight:500;font-size:13px;">راجعي ما حفظتِه هذا الأسبوع</span></div></div>`,
+    rest:`<div class="banner b-rest"><span class="bi">☀️</span><div><strong>يوم الجمعة — يوم الراحة! 🌸</strong><br><span style="font-weight:500;font-size:13px;">استمتعي بيومك واحتفظي بطاقتك ليوم الاختبار</span></div></div>`,
+    exam:`<div class="banner b-exam"><span class="bi">📝</span><div><strong>يوم السبت — يوم الاختبار! 🤲</strong><br><span style="font-weight:500;font-size:13px;">وفقكِ الله — ستُدخل المشرفة درجتك قريباً</span></div></div>`
+  };
+  if(info.status==='before'){
+    // Show preview of week 1 day 1 tasks
+    el.innerHTML=bMap.before+renderTasksPreview()+renderHistory();return;
+  }
+  if(info.status!=='task'){el.innerHTML=(bMap[info.status]||'')+renderHistory();return;}
+
+  const dm={0:'الأحد',1:'الإثنين',2:'الثلاثاء',3:'الأربعاء'};
+  const graceBanner=isGrace?`<div class="banner b-rest" style="padding:9px 14px;font-size:12.5px;margin-bottom:8px;"><span class="bi" style="font-size:20px;">⏰</span><div>التسليم يُحتسب لأمس — الوقت قبل الساعة ٥ م</div></div>`:'';
+  const data=getData();
+  const ek=`${me.id}_w${info.week}_d${info.taskDay}`;
+  const entry=data.entries[ek];
+  const submitted=entry&&entry.submitted;
+
+  if(entry&&!submitted)tStates=entry.tasks.map(t=>t.c);
+  else tStates=[false,false,false,false,false];
+
+  let html=`${graceBanner}<div class="banner b-task"><span class="bi">🌊</span><div><strong>الأسبوع ${an(info.week)}</strong> — ${dm[info.dow]} | يوم المهام</div></div>
+  <details style="margin-bottom:14px;">
+    <summary style="cursor:pointer;padding:13px 18px;background:rgba(255,255,255,.82);backdrop-filter:blur(20px);border-radius:18px;border:1.5px solid rgba(13,148,136,.18);font-size:15px;font-weight:800;color:var(--t);list-style:none;display:flex;align-items:center;gap:8px;box-shadow:var(--s2);">
+      <span>🌟</span> طريقة إنجاز بنود البطاقة
+      <span style="margin-right:auto;font-size:18px;opacity:.55;">﹀</span>
+    </summary>
+    <div style="background:rgba(255,255,255,.78);backdrop-filter:blur(20px);border-radius:0 0 18px 18px;border:1.5px solid rgba(13,148,136,.12);border-top:none;padding:14px 18px;">
+      ${TASKS.map(t=>`<div style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid rgba(13,148,136,.08);">
+        <span style="font-size:22px;flex-shrink:0;">${t.icon}</span>
+        <div><div style="font-size:14px;font-weight:700;color:var(--tx);">${t.name}</div>
+        <div style="font-size:12.5px;color:var(--mu);margin-top:2px;">${t.desc}</div></div>
+      </div>`).join('')}
+    </div>
+  </details>
+  <div class="card"><div class="ctitle">🌟 بطاقة إنجاز اليوم</div>`;
+
+  if(submitted){
+    html+=`<span class="chip cht" style="margin-bottom:12px;">✅ تم التسليم</span>`;
+    TASKS.forEach((t,i)=>{
+      const done=entry.tasks[i].c;
+      const userNote=entry.tasks[i].n;
+      html+=`<div class="titem ${done?'done':''}">
+        <div class="thdr" style="cursor:default;">
+          <div class="tico">${t.icon}</div>
+          <div class="tnw">
+            <div class="tn">${t.name}</div>
+            <div class="tds">${t.desc}</div>
+            ${userNote?`<div style="font-size:12px;color:var(--c);margin-top:5px;padding:5px 9px;background:rgba(249,115,22,.08);border-radius:8px;">📝 ${userNote}</div>`:''}
+          </div>
+          <div class="tchk" style="pointer-events:none;">${done?'✓':''}</div>
+        </div></div>`;
+    });
+    const cnt=entry.tasks.filter(t=>t.c).length;
+    html+=`<div style="text-align:center;padding:14px;background:linear-gradient(135deg,var(--tp),rgba(224,242,254,.8));border-radius:14px;margin-top:12px;">
+      <div style="font-size:28px;font-weight:900;color:var(--t);">${an(cnt)}/٥ 🌟</div>
+      <div style="font-size:13px;color:var(--mu);">إنجاز اليوم</div>
+    </div>
+    <button class="btn bc" style="width:100%;margin-top:12px;" onclick="doExport('${ek}')">📸 تصدير بطاقة الإنجاز</button>`;
+  } else {
+    TASKS.forEach((t,i)=>{
+      const ck=tStates[i],notes=entry?entry.tasks[i].n:'';
+      html+=`<div class="titem ${ck?'done':''}" id="ti${i}">
+        <div class="thdr" onclick="togTask(${i},'${ek}')">
+          <div class="tico">${t.icon}</div>
+          <div class="tnw"><div class="tn">${t.name}</div><div class="tds">${t.desc}</div></div>
+          <div class="tchk" id="tc${i}">${ck?'✓':''}</div>
+        </div>
+        <textarea class="tno" id="tn${i}" placeholder="ملاحظاتك..." oninput="autosave('${ek}')">${notes||''}</textarea>
+      </div>`;
+    });
+    html+=`<button class="btn bt bf" style="margin-top:14px;" onclick="submitTasks('${ek}')">✅ تسليم المهام اليوم</button>`;
+  }
+  html+=`</div>`;
+  html+=renderHistory();
+  el.innerHTML=html;
+}
+
+function renderTasksPreview(){
+  let html=`<div class="card">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;padding:10px 14px;background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(251,191,36,.08));border-radius:14px;border:1.5px solid rgba(245,158,11,.25);">
+      <span style="font-size:22px;">👁️</span>
+      <div style="font-size:13.5px;font-weight:700;color:#78350f;">معاينة المهام — الحلقة تبدأ غداً الأحد ٢٨ يونيو</div>
+    </div>
+    <div class="ctitle">🌟 بطاقة إنجاز اليوم (معاينة)</div>`;
+  TASKS.forEach(t=>{
+    html+=`<div class="titem" style="opacity:.85;">
+      <div class="thdr" style="cursor:default;">
+        <div class="tico">${t.icon}</div>
+        <div class="tnw"><div class="tn">${t.name}</div><div class="tds">${t.desc}</div></div>
+        <div class="tchk"></div>
+      </div>
+      <textarea class="tno" placeholder="ملاحظاتك..." disabled style="opacity:.5;cursor:not-allowed;"></textarea>
+    </div>`;
+  });
+  html+=`<button class="btn bt bf" style="margin-top:14px;opacity:.45;cursor:not-allowed;" disabled>✅ التسليم يبدأ من الأحد</button></div>`;
+  return html;
+}
+
+let _asTimer=null;
+function autosave(ek){
+  const tasks=TASKS.map((t,i)=>({id:t.id,name:t.name,icon:t.icon,c:tStates[i],n:g(`tn${i}`)?.value||''}));
+  const entry={hafizaId:me.id,tasks,submitted:false,at:ts()};
+  _data.entries[ek]=entry;
+  clearTimeout(_asTimer);
+  _asTimer=setTimeout(()=>db.collection('entries').doc(ek).set(entry).catch(console.error),2000);
+}
+function togTask(i,ek){
+  tStates[i]=!tStates[i];
+  const item=document.getElementById(`ti${i}`);
+  const chk=document.getElementById(`tc${i}`);
+  item.classList.toggle('done',tStates[i]);
+  chk.textContent=tStates[i]?'✓':'';
+  autosave(ek);
+}
+async function submitTasks(ek){
+  const tasks=TASKS.map((t,i)=>({id:t.id,name:t.name,icon:t.icon,c:tStates[i],n:g(`tn${i}`)?.value.trim()||''}));
+  const entry={hafizaId:me.id,tasks,submitted:true,at:ts()};
+  try{
+    clearTimeout(_asTimer);
+    await fsSet('entries',ek,entry);
+    tStates=[false,false,false,false,false];
+    toast('✅ تم تسليم مهام اليوم!');
+    setTimeout(()=>{
+      openMod(`<div style="text-align:center;">
+        <div style="font-size:42px;margin-bottom:12px;">📸</div>
+        <div style="font-size:18px;font-weight:800;color:var(--tx);margin-bottom:8px;">تصدير بطاقة الإنجاز</div>
+        <div style="color:var(--mu);font-size:14px;margin-bottom:20px;">هل تريدين تصدير بطاقة مهامك اليوم؟</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <button class="btn bt" onclick="doExport('${ek}');closeMod()">📸 تصدير</button>
+          <button class="btn bg" onclick="closeMod()">لاحقاً</button>
+        </div></div>`);
+    },700);
+    renderTasks();
+  }catch(e){toast('❌ خطأ في الحفظ، حاولي مرة ثانية');}
+}
+
+function renderHistory(){
+  const data=getData();
+  let html=`<div class="card"><div class="ctitle">📋 سجل مهامك</div>`;
+  let any=false;
+  for(let w=1;w<=WEEKS;w++){
+    for(let d=1;d<=4;d++){
+      const ek=`${me.id}_w${w}_d${d}`;
+      const e=data.entries[ek];
+      if(!e||!e.submitted)continue;
+      any=true;
+      const done=e.tasks.filter(t=>t.c).length;
+      const td=taskDate(w,d);
+      html+=`<div class="irow">
+        <div><div style="font-weight:700;">أسبوع ${an(w)} — ${DAR[td.getDay()]}</div><div class="ilbl">${fmtD(td)}</div></div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <span style="font-size:20px;font-weight:900;color:${done===5?'var(--t)':'var(--c)'};">${an(done)}/٥</span>
+          <button class="btn bc bsm" onclick="doExport('${ek}')">📸</button>
+        </div></div>`;
+    }
+  }
+  if(!any)html+=`<div style="text-align:center;color:var(--mu);padding:20px;font-size:15px;">🌴 لا توجد مهام مسلّمة بعد</div>`;
+  return html+`</div>`;
+}
+
+/* ─── HAFIZA: SCORES ─── */
+function renderScores(){
+  const el=document.getElementById('tabScore');
+  const scores=calcScores(me.id);
+  const total=scores.reduce((s,x)=>s+x.total,0);
+  const maxT=calcMaxPossible(),pct=maxT>0?(total/maxT*100):0;
+  const allH=allHafizat();
+  const rank=allH.findIndex(h=>h.id===me.id)+1;
+  const tTask=scores.reduce((s,x)=>s+x.tS,0);
+  const tTaskM=scores.reduce((s,x)=>s+x.tM,0);
+  const tExam=scores.reduce((s,x)=>s+(x.eS||0),0);
+  const tExamM=scores.filter(x=>x.eS!=null).length*10;
+
+  let html=`<div class="card">
+    <div class="ctitle">⭐ درجاتي الإجمالية</div>
+    <div class="srw">
+      <svg class="ssvg" viewBox="0 0 130 130">
+        <defs>
+          <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0d9488"/>
+            <stop offset="60%" stop-color="#14b8a6"/>
+            <stop offset="100%" stop-color="#f97316"/>
+          </linearGradient>
+        </defs>
+        <circle cx="65" cy="65" r="54" fill="none" stroke="rgba(13,148,136,.12)" stroke-width="11"/>
+        <circle id="ringArc" cx="65" cy="65" r="54" fill="none"
+          stroke="url(#rg)" stroke-width="11" stroke-linecap="round"
+          stroke-dasharray="${CIRC}" stroke-dashoffset="${CIRC}"
+          transform="rotate(-90 65 65)"
+          style="transition:stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1)"/>
+      </svg>
+      <div class="sctr">
+        <div class="snum" id="sNum">٠</div>
+        <div class="slbl">من ${an(maxT)}</div>
+      </div>
+    </div>
+    ${rank>0?`<div style="text-align:center;margin-top:6px;font-size:14px;color:var(--mu);">ترتيبكِ 🏆 <strong style="color:var(--c);font-size:21px;">${an(rank)}</strong></div>`:''}
+    <div class="sgrid">
+      <div class="spill"><div class="sv">${an(tTask)}</div><div class="sl">مهام مكتملة</div><div class="so">من ${an(tTaskM)}</div></div>
+      <div class="spill"><div class="sv">${an(tExam)}</div><div class="sl">درجات الاختبارات</div><div class="so">من ${an(tExamM)}</div></div>
+    </div>
+  </div>
+  <div class="card"><div class="ctitle">📅 تفاصيل الأسابيع</div>`;
+
+  scores.forEach(s=>{
+    const p2=s.tM>0?(s.tS/s.tM*100):0;
+    html+=`<div style="margin-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+        <div style="font-weight:800;color:var(--tx);font-size:15px;">الأسبوع ${an(s.w)}</div>
+        <div style="font-size:18px;font-weight:900;color:var(--t);">${an(s.total)}<span style="font-size:12px;color:var(--mu);font-weight:600;">/${an(calcWeekMax(s.w))}</span></div>
+      </div>
+      <div class="pgbar"><div class="pgfill" style="width:${p2}%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--mu);margin-top:4px;">
+        <span>المهام: ${an(s.tS)}/${an(s.tM)}</span>
+        <span>الاختبار: ${s.eS!=null?an(s.eS)+'/١٠':'لم تُضاف بعد'}</span>
+      </div></div>`;
+  });
+  html+=`</div>`;
+  el.innerHTML=html;
+
+  // Animate ring + count-up
+  setTimeout(()=>{
+    const arc=document.getElementById('ringArc');
+    const numEl=document.getElementById('sNum');
+    if(arc)arc.style.strokeDashoffset=CIRC*(1-pct/100);
+    let count=0,step=total/60;
+    const tmr=setInterval(()=>{
+      count=Math.min(count+step,total);
+      if(numEl)numEl.textContent=an(Math.round(count));
+      if(count>=total)clearInterval(tmr);
+    },16);
+  },120);
+}
+
+/* ─── HAFIZA: LEADERBOARD ─── */
+function renderHfLb(){
+  document.getElementById('tabLeader').innerHTML=`<div class="card">
+    <div class="ctitle">🏆 لوحة المتصدرات</div>
+    <div class="wbadges" id="hfLbBdg"></div>
+    <div id="hfPod"></div>
+    <div id="hfList"></div>
+  </div>`;
+  buildBadges('hfLbBdg',w=>drawHfLb(w));
+  drawHfLb(0);
+}
+function drawHfLb(sw){
+  setBadgeActive('hfLbBdg',sw);
+  const all=allHafizat();
+  const sorted=sw===0?[...all]:[...all].sort((a,b)=>(b.scores.find(s=>s.w===sw)?.total||0)-(a.scores.find(s=>s.w===sw)?.total||0));
+  const getS=h=>sw===0?h.total:(h.scores.find(s=>s.w===sw)?.total||0);
+  const maxS=sw===0?calcMaxPossible():calcWeekMax(sw);
+  drawPodium('hfPod',sorted,getS,true);
+  drawList('hfList',sorted.slice(3),3,getS,maxS,true);
+}
+
+function drawPodium(elId,sorted,getS,showMe){
+  const el=document.getElementById(elId);
+  const top3=sorted.slice(0,3);
+  if(!top3.length){el.innerHTML=`<div style="text-align:center;padding:22px;color:var(--mu);">لا توجد حافظات بعد 🌴</div>`;return;}
+  // Order: [2nd, 1st, 3rd] for visual podium
+  const order=top3.length>=2?[top3[1],top3[0],top3[2]].filter(Boolean):[top3[0]];
+  const cls=top3.length>=2?['p2','p1','p3']:['p1'];
+  const med=top3.length>=2?['🥈','🥇','🥉']:['🥇'];
+  el.innerHTML=`<div class="podium">
+    ${order.map((h,i)=>{
+      if(!h)return'';
+      const sc=getS(h),init=h.name.charAt(0);
+      const isMe=showMe&&h.id===me.id;
+      return`<div class="pit ${cls[i]}">
+        <div class="pbar"></div>
+        <div class="psc">${an(sc)}</div>
+        <div class="pmed">${med[i]}</div>
+        <div class="pav" style="${isMe?'outline:3px solid var(--t);outline-offset:3px':''}">
+          ${init}
+        </div>
+        <div class="pnm">${h.name.split(' ')[0]}${isMe?' 👈':''}</div>
+        ${i===1&&cls[1]==='p1'&&sc>0?`<span class="bstar">⭐ متميزة</span>`:''}
+        ${i===0&&cls[0]==='p1'&&sc>0?`<span class="bstar">⭐ متميزة</span>`:''}
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+function drawList(elId,arr,startRank,getS,maxS,showMe){
+  const el=document.getElementById(elId);
+  if(!arr.length){el.innerHTML='';return;}
+  el.innerHTML=arr.map((h,i)=>{
+    const sc=getS(h),pct=maxS>0?(sc/maxS*100):0,init=h.name.charAt(0);
+    const isMe=showMe&&h.id===me.id;
+    return`<div class="lbitem ${isMe?'me':''}">
+      <div class="lbrank">${an(i+startRank+1)}</div>
+      <div class="lbav">${init}</div>
+      <div class="lbinf">
+        <div class="lbnm">${h.name}${isMe?` <span style="color:var(--t);font-size:12px;">(أنتِ)</span>`:''}</div>
+        <div class="lbbar-w"><div class="lbbar-f" style="width:${pct}%"></div></div>
+      </div>
+      <div class="lbsr"><div class="lbnum">${an(sc)}</div><div class="lbden">/${an(maxS)}</div></div>
+    </div>`;
+  }).join('');
+}
+
+/* ─── SUPERVISOR: OVERVIEW ─── */
+function renderSupOv(sw){
+  const info=dayInfo(new Date());
+  sw=sw||Math.min(Math.max(info.week||1,1),WEEKS);
+  const el=document.getElementById('stabOv');
+  const data=getData();
+  const hfs=Object.values(data.users).filter(u=>u.role==='hafiza');
+
+  let tbl=hfs.length?`<div class="stblw"><table class="stbl">
+    <thead><tr><th>الاسم</th><th>أحد</th><th>إثنين</th><th>ثلاثاء</th><th>أربعاء</th><th>مهام</th><th>اختبار</th><th>المجموع</th><th></th></tr></thead>
+    <tbody>${hfs.map(h=>{
+      const ws=calcScores(h.id).find(s=>s.w===sw)||{tS:0,tM:0,eS:null,total:0};
+      const days=[1,2,3,4].map(d=>{
+        const e=data.entries[`${h.id}_w${sw}_d${d}`];
+        if(!e||!e.submitted)return`<span class="sd miss">—</span>`;
+        const done=e.tasks.filter(t=>t.c).length;
+        return`<span class="sd ${done===5?'full':'part'}">${an(done)}/٥</span>`;
+      });
+      return`<tr>
+        <td>${h.name}</td>
+        ${days.map(d=>`<td>${d}</td>`).join('')}
+        <td><strong>${an(ws.tS)}/٢٠</strong></td>
+        <td>${ws.eS!=null?`<strong>${an(ws.eS)}/١٠</strong>`:'<span class="sd miss">—</span>'}</td>
+        <td><strong style="color:var(--t);font-size:15px;">${an(ws.total)}</strong></td>
+        <td><button class="btn bt bsm" onclick="viewHf('${h.id}','${h.name}')">تفاصيل</button></td>
+      </tr>`;
+    }).join('')}</tbody></table></div>`:
+    `<div style="text-align:center;padding:26px;color:var(--mu);">🌴 لا توجد حافظات مسجلات بعد</div>`;
+
+  el.innerHTML=`<div class="card">
+    <div class="ctitle">📊 الحافظات — الأسبوع ${an(sw)}</div>
+    <div class="wbadges" id="supOvBdg"></div>
+    ${tbl}
+  </div>`;
+  buildBadges('supOvBdg',w=>renderSupOv(w),sw);
+}
+function viewHf(hid,hname){
+  const scores=calcScores(hid),total=scores.reduce((s,x)=>s+x.total,0);
+  openMod(`<div>
+    <div style="font-size:19px;font-weight:800;color:var(--tx);margin-bottom:14px;">📖 ${hname}</div>
+    <div style="text-align:center;margin-bottom:16px;"><div style="font-size:32px;font-weight:900;color:var(--t);">${an(total)}</div><div style="font-size:13px;color:var(--mu);">مجموع الدرجات</div></div>
+    ${scores.map(s=>`<div class="irow">
+      <div><div style="font-weight:700;">أسبوع ${an(s.w)}</div><div class="ilbl">مهام: ${an(s.tS)}/${an(s.tM)} | اختبار: ${s.eS!=null?an(s.eS)+'/١٠':'—'}</div></div>
+      <div style="font-size:20px;font-weight:900;color:var(--t);">${an(s.total)}</div>
+    </div>`).join('')}
+    <button class="btn bg bf" style="margin-top:14px;" onclick="closeMod()">إغلاق</button>
+  </div>`);
+}
+
+/* ─── SUPERVISOR: EXAM ─── */
+function renderSupEx(sw){
+  const info=dayInfo(new Date());
+  sw=sw||Math.min(Math.max(info.week||1,1),WEEKS);
+  const el=document.getElementById('stabEx');
+  el.innerHTML=`<div class="card">
+    <div class="ctitle">📝 إدخال درجات الاختبار</div>
+    <div class="wbadges" id="supExBdg"></div>
+    <div id="supExCnt"></div>
+  </div>`;
+  buildBadges('supExBdg',w=>renderSupEx(w),sw);
+  drawExForm(sw);
+}
+function drawExForm(w){
+  const data=getData();
+  const hfs=Object.values(data.users).filter(u=>u.role==='hafiza');
+  const el=document.getElementById('supExCnt');
+  if(!hfs.length){el.innerHTML=`<div style="text-align:center;padding:18px;color:var(--mu);">لا توجد حافظات بعد 🌴</div>`;return;}
+  el.innerHTML=`<div style="margin-top:10px;">
+    ${hfs.map(h=>{
+      const ex=data.exams[`${h.id}_w${w}`];
+      return`<div class="irow">
+        <div><div style="font-weight:700;">${h.name}</div>${ex?`<div class="ilbl">آخر تعديل: ${new Date(ex.at).toLocaleDateString('ar-SA')}</div>`:''}</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <input type="number" class="exi" id="ex_${h.id}" min="0" max="10" step="0.5" value="${ex!=null?ex.score:''}" placeholder="—">
+          <span style="color:var(--mu);font-size:13px;">/١٠</span>
+        </div></div>`;
+    }).join('')}
+  </div>
+  <button class="btn bt bf" style="margin-top:14px;" onclick="saveExams(${w})">💾 حفظ درجات الأسبوع ${an(w)}</button>`;
+}
+async function saveExams(w){
+  const hfs=Object.values(_data.users).filter(u=>u.role==='hafiza');
+  const batch=db.batch();let n=0;
+  hfs.forEach(h=>{
+    const inp=document.getElementById(`ex_${h.id}`);
+    if(inp&&inp.value!==''){
+      const sc=Math.min(10,Math.max(0,parseFloat(inp.value)||0));
+      const key=`${h.id}_w${w}`;
+      const val={hafizaId:h.id,week:w,score:sc,by:me.id,at:ts()};
+      _data.exams[key]=val;
+      batch.set(db.collection('exams').doc(key),val);n++;
+    }
+  });
+  try{await batch.commit();toast(`✅ تم حفظ درجات ${an(n)} حافظة!`);}
+  catch(e){toast('❌ خطأ في الحفظ');}
+}
+
+/* ─── SUPERVISOR: LEADERBOARD ─── */
+function renderSupLb(){
+  document.getElementById('stabLb').innerHTML=`<div class="card">
+    <div class="ctitle">🏆 لوحة المتصدرات الكاملة</div>
+    <div class="wbadges" id="supLbBdg"></div>
+    <div id="supPod"></div>
+    <div id="supList"></div>
+  </div>`;
+  buildBadges('supLbBdg',w=>drawSupLb(w));
+  drawSupLb(0);
+}
+function drawSupLb(sw){
+  setBadgeActive('supLbBdg',sw);
+  const all=allHafizat();
+  const sorted=sw===0?[...all]:[...all].sort((a,b)=>(b.scores.find(s=>s.w===sw)?.total||0)-(a.scores.find(s=>s.w===sw)?.total||0));
+  const getS=h=>sw===0?h.total:(h.scores.find(s=>s.w===sw)?.total||0);
+  const maxS=sw===0?calcMaxPossible():calcWeekMax(sw);
+  drawPodium('supPod',sorted,getS,false);
+  drawList('supList',sorted.slice(3),3,getS,maxS,false);
+}
+
+/* ─── ADMIN PANEL ─── */
+function renderAdmin(){
+  const el=document.getElementById('stabAd');
+  el.innerHTML=`<div class="card">
+    <div class="ctitle">⚙️ لوحة الإدارة</div>
+    <div class="tabs">
+      <button class="tabbtn active" id="adT1" onclick="adSub('sc')">✏️ تعديل الدرجات</button>
+      <button class="tabbtn" id="adT2" onclick="adSub('zr')">⭕ منح صفر</button>
+      <button class="tabbtn" id="adT3" onclick="adSub('us')">👤 المستخدمون</button>
+    </div>
+    <div id="adSc"></div>
+    <div id="adZr" class="hidden"></div>
+    <div id="adUs" class="hidden"></div>
+  </div>`;
+  adSub('sc');
+}
+
+function adSub(t){
+  const map=['sc','zr','us'];
+  map.forEach((x,i)=>{
+    document.getElementById(`adT${i+1}`)?.classList.toggle('active',x===t);
+    document.getElementById(`ad${x[0].toUpperCase()+x[1]}`)?.classList.toggle('hidden',x!==t);
+  });
+  if(t==='sc')drawAdScores('',1);
+  else if(t==='zr')drawAdZeros();
+  else drawAdUsers();
+}
+
+/* ── Admin: Edit Scores ── */
+function drawAdScores(uid_,sw){
+  const data=getData();
+  const hfs=Object.values(data.users).filter(u=>u.role==='hafiza');
+  sw=sw||1;
+  const el=document.getElementById('adSc');
+  if(!el)return;
+
+  const userSel=`<div class="fg">
+    <label class="fl">👤 اختاري الحافظة</label>
+    <select class="fi" id="adUsel" onchange="drawAdScores(this.value,${sw})">
+      <option value="">— اختاري —</option>
+      ${hfs.map(h=>`<option value="${h.id}"${uid_===h.id?' selected':''}>${h.name}</option>`).join('')}
+    </select></div>`;
+
+  const badges=`<div class="wbadges">${Array.from({length:WEEKS},(_,i)=>`<button class="wbdg${sw===i+1?' active':''}" onclick="drawAdScores('${uid_||''}',${i+1})">أسبوع ${an(i+1)}</button>`).join('')}</div>`;
+
+  if(!uid_){el.innerHTML=userSel+badges+`<div style="text-align:center;padding:14px;color:var(--mu);font-size:14px;">⬆️ اختاري حافظة أولاً</div>`;return;}
+
+  const dayNames=['الأحد','الإثنين','الثلاثاء','الأربعاء'];
+  let rows='';
+  for(let d=1;d<=4;d++){
+    const ek=`${uid_}_w${sw}_d${d}`;
+    const e=data.entries[ek];
+    const cur=e&&e.submitted?e.tasks.filter(t=>t.c).length:null;
+    const td=taskDate(sw,d);
+    rows+=`<div class="irow">
+      <div>
+        <div style="font-weight:700;">${dayNames[d-1]}</div>
+        <div class="ilbl">${fmtD(td)}</div>
+        <div class="ilbl" style="color:${cur!=null?'var(--t)':'var(--c)'};">${cur!=null?`الحالي: ${an(cur)}/٥`:'لم تسلّم'}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <input type="number" class="exi" id="adsc_${d}" min="0" max="5" step="1" value="${cur!=null?cur:''}" placeholder="—">
+        <span style="font-size:12px;color:var(--mu);">/٥</span>
+      </div></div>`;
+  }
+
+  const ex=data.exams[`${uid_}_w${sw}`];
+  rows+=`<div class="irow" style="border-top:2px solid rgba(13,148,136,.15);padding-top:12px;margin-top:4px;">
+    <div>
+      <div style="font-weight:700;">🎯 درجة الاختبار</div>
+      <div class="ilbl">${ex!=null?`الحالية: ${an(ex.score)}/١٠`:'لم تُضاف بعد'}</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <input type="number" class="exi" id="adex" min="0" max="10" step="0.5" value="${ex!=null?ex.score:''}" placeholder="—">
+      <span style="font-size:12px;color:var(--mu);">/١٠</span>
+    </div></div>`;
+
+  el.innerHTML=userSel+badges+`<div>${rows}</div>
+    <button class="btn bt bf" style="margin-top:14px;" onclick="saveAdScores('${uid_}',${sw})">💾 حفظ — أسبوع ${an(sw)}</button>`;
+}
+
+async function saveAdScores(uid_,w){
+  if(!_data.users[uid_]){toast('❌ حافظة غير موجودة');return;}
+  const batch=db.batch();let changed=0;
+  for(let d=1;d<=4;d++){
+    const inp=document.getElementById(`adsc_${d}`);
+    if(inp&&inp.value!==''){
+      const score=Math.min(5,Math.max(0,parseInt(inp.value)||0));
+      const ek=`${uid_}_w${w}_d${d}`;
+      const prev=_data.entries[ek];
+      const tasks=TASKS.map((t,i)=>({id:t.id,name:t.name,icon:t.icon,c:i<score,n:prev?.tasks[i]?.n||''}));
+      const val={hafizaId:uid_,tasks,submitted:true,at:ts(),adminSet:true};
+      _data.entries[ek]=val;
+      batch.set(db.collection('entries').doc(ek),val);changed++;
+    }
+  }
+  const exInp=document.getElementById('adex');
+  if(exInp&&exInp.value!==''){
+    const es=Math.min(10,Math.max(0,parseFloat(exInp.value)||0));
+    const exKey=`${uid_}_w${w}`;
+    const exVal={hafizaId:uid_,week:w,score:es,by:me.id,at:ts()};
+    _data.exams[exKey]=exVal;
+    batch.set(db.collection('exams').doc(exKey),exVal);changed++;
+  }
+  try{await batch.commit();toast(`✅ تم حفظ ${an(changed)} تعديل`);}
+  catch(e){toast('❌ خطأ في الحفظ');}
+  drawAdScores(uid_,w);
+}
+
+/* ── Admin: Give Zeros ── */
+function drawAdZeros(){
+  const el=document.getElementById('adZr');if(!el)return;
+  const data=getData();
+  const hfs=Object.values(data.users).filter(u=>u.role==='hafiza');
+
+  // Auto-detect last task day
+  const eff=getEffectiveDate();
+  const info=dayInfo(eff);
+  let defW=1,defD=1;
+  if(info.status==='task'){defW=info.week;defD=info.taskDay;}
+  else{
+    const yd=new Date(eff);yd.setDate(yd.getDate()-1);
+    const yi=dayInfo(yd);
+    if(yi.status==='task'){defW=yi.week;defD=yi.taskDay;}
+    else{defW=Math.min(info.week||1,WEEKS);defD=4;}
+  }
+
+  let wOpts='',dOpts='';
+  for(let w=1;w<=WEEKS;w++)wOpts+=`<option value="${w}"${w===defW?' selected':''}>${an(w)}</option>`;
+  for(let d=1;d<=4;d++)dOpts+=`<option value="${d}"${d===defD?' selected':''}>${an(d)}</option>`;
+
+  el.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+    <div class="fg" style="margin:0"><label class="fl">الأسبوع</label><select class="fi" id="zrW" onchange="previewZeros()">${wOpts}</select></div>
+    <div class="fg" style="margin:0"><label class="fl">اليوم</label><select class="fi" id="zrD" onchange="previewZeros()">${dOpts}</select></div>
+  </div>
+  <div id="zrPreview"></div>`;
+  previewZeros();
+}
+
+function previewZeros(){
+  const w=parseInt(g('zrW')?.value)||1,d=parseInt(g('zrD')?.value)||1;
+  const data=getData();
+  const hfs=Object.values(data.users).filter(u=>u.role==='hafiza');
+  const absent=hfs.filter(h=>!data.entries[`${h.id}_w${w}_d${d}`]?.submitted);
+  const present=hfs.filter(h=>data.entries[`${h.id}_w${w}_d${d}`]?.submitted);
+  const el=document.getElementById('zrPreview');if(!el)return;
+  el.innerHTML=`<div style="background:rgba(254,226,226,.7);border:1.5px solid rgba(252,165,165,.3);border-radius:14px;padding:13px;margin-bottom:10px;">
+    <div style="font-size:13.5px;font-weight:700;color:#7f1d1d;margin-bottom:7px;">⭕ لم تسلّم — ${an(absent.length)} حافظة</div>
+    ${absent.length?absent.map(h=>`<div style="padding:4px 0;font-size:13px;color:#991b1b;border-bottom:1px solid rgba(252,165,165,.15);">• ${h.name}</div>`).join(''):
+    '<div style="font-size:13px;color:#6b7280;">✅ الجميع سلّمن</div>'}
+  </div>
+  ${present.length?`<div style="background:rgba(204,251,241,.6);border:1.5px solid rgba(20,184,166,.2);border-radius:14px;padding:11px;margin-bottom:10px;">
+    <div style="font-size:13px;font-weight:700;color:var(--t);margin-bottom:5px;">✅ سلّمت — ${an(present.length)}</div>
+    ${present.map(h=>`<div style="font-size:12px;color:var(--mu);">• ${h.name}</div>`).join('')}
+  </div>`:''}
+  <div style="font-size:12px;color:var(--mu);text-align:center;padding:8px 12px;background:rgba(204,251,241,.4);border-radius:10px;margin-top:6px;">✅ الصفر يُعطى تلقائياً لكل من لم تسجّل في الأيام الماضية</div>`;
+}
+
+async function giveZeroAbsents(w,d){
+  const hfs=Object.values(_data.users).filter(u=>u.role==='hafiza');
+  const batch=db.batch();let count=0;
+  hfs.forEach(h=>{
+    const ek=`${h.id}_w${w}_d${d}`;
+    if(!_data.entries[ek]?.submitted){
+      const tasks=TASKS.map(t=>({id:t.id,name:t.name,icon:t.icon,c:false,n:''}));
+      const val={hafizaId:h.id,tasks,submitted:true,at:ts(),adminSet:true,isZero:true};
+      _data.entries[ek]=val;
+      batch.set(db.collection('entries').doc(ek),val);count++;
+    }
+  });
+  try{await batch.commit();toast(`✅ تم منح صفر لـ ${an(count)} حافظة`);}
+  catch(e){toast('❌ خطأ في الحفظ');}
+  previewZeros();
+}
+
+async function autoZeroAbsents(){
+  const hfs=Object.values(_data.users).filter(u=>u.role==='hafiza');
+  if(!hfs.length)return;
+  const eff=getEffectiveDate();
+  const effDay=new Date(eff);effDay.setHours(0,0,0,0);
+  const batch=db.batch();let changed=false;
+  for(let w=1;w<=WEEKS;w++){
+    for(let d=1;d<=4;d++){
+      const td=taskDate(w,d);td.setHours(0,0,0,0);
+      if(td>=effDay)continue;
+      hfs.forEach(h=>{
+        const ek=`${h.id}_w${w}_d${d}`;
+        if(!_data.entries[ek]?.submitted){
+          const tasks=TASKS.map(t=>({id:t.id,name:t.name,icon:t.icon,c:false,n:''}));
+          const val={hafizaId:h.id,tasks,submitted:true,at:ts(),adminSet:true,isZero:true};
+          _data.entries[ek]=val;
+          batch.set(db.collection('entries').doc(ek),val);changed=true;
+        }
+      });
+    }
+  }
+  if(changed)await batch.commit();
+}
+
+/* ── Admin: Manage Users ── */
+function drawAdUsers(){
+  const data=getData();
+  const hfs=Object.values(data.users).filter(u=>u.role==='hafiza');
+  const el=document.getElementById('adUs');if(!el)return;
+  if(!hfs.length){el.innerHTML=`<div style="text-align:center;padding:18px;color:var(--mu);">لا توجد حافظات مسجلات 🌴</div>`;return;}
+  el.innerHTML=`<div style="font-size:12px;color:#92400e;padding:9px 12px;background:rgba(254,243,199,.8);border-radius:10px;margin-bottom:12px;border:1.5px solid rgba(251,191,36,.3);">
+    ⚠️ حذف الحساب يحذف جميع درجاتها ومهامها نهائياً
+  </div>
+  ${hfs.map(h=>`<div class="irow">
+    <div>
+      <div style="font-weight:700;">${h.name}</div>
+      <div class="ilbl">@${h.username} | المجموع: ${an(totalScore(h.id))}</div>
+    </div>
+    <button class="btn bsm" style="background:rgba(239,68,68,.1);color:#dc2626;border:1.5px solid rgba(239,68,68,.22);" onclick="confirmDeleteUser('${h.id}','${h.name.replace(/'/g,"\\'")}')">🗑️ حذف</button>
+  </div>`).join('')}`;
+}
+
+function confirmDeleteUser(uid_,name){
+  openMod(`<div style="text-align:center;">
+    <div style="font-size:40px;margin-bottom:12px;">⚠️</div>
+    <div style="font-size:17px;font-weight:800;color:var(--tx);margin-bottom:8px;">حذف ${name}؟</div>
+    <div style="color:var(--mu);font-size:13.5px;margin-bottom:20px;">سيتم حذف كل درجاتها ومهامها نهائياً ولا يمكن التراجع</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <button class="btn" style="background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;min-height:46px;" onclick="doDeleteUser('${uid_}')">🗑️ نعم، احذف</button>
+      <button class="btn bg" onclick="closeMod()">إلغاء</button>
+    </div></div>`);
+}
+
+async function doDeleteUser(uid_){
+  if(!_data.users[uid_]){toast('❌ المستخدم غير موجود');closeMod();return;}
+  const name=_data.users[uid_].name;
+  const batch=db.batch();
+  batch.delete(db.collection('users').doc(uid_));
+  Object.keys(_data.entries).forEach(k=>{if(k.startsWith(uid_+'_')){delete _data.entries[k];batch.delete(db.collection('entries').doc(k));}});
+  Object.keys(_data.exams).forEach(k=>{if(k.startsWith(uid_+'_')){delete _data.exams[k];batch.delete(db.collection('exams').doc(k));}});
+  delete _data.users[uid_];
+  try{await batch.commit();closeMod();toast(`✅ تم حذف ${name}`);}
+  catch(e){toast('❌ خطأ في الحذف');}
+  drawAdUsers();
+}
+
+/* ─── EXPORT CARD ─── */
+async function doExport(ek){
+  const data=getData();
+  const entry=data.entries[ek];
+  if(!entry||!entry.submitted){toast('❌ لا توجد مهام مسلّمة');return;}
+  const m=ek.match(/_w(\d+)_d(\d+)$/);
+  const w=m?+m[1]:1,d=m?+m[2]:1;
+  const td=taskDate(w,d);
+  const done=entry.tasks.filter(t=>t.c).length;
+  const card=document.getElementById('xcard');
+  card.innerHTML=`
+    <div class="xhd">
+      <div class="xt">يُنعشـني إنجـازي 🍹🧡</div>
+      <div class="xnm">اسم المُنجـزة ☀️: ${me.name}</div>
+      <div class="xme">الأسبوع ${an(w)} | ${fmtD(td)}</div>
+    </div>
+    <div class="xts">
+      ${entry.tasks.map(t=>{
+        const def=TASKS.find(x=>x.id===t.id);
+        return`<div class="xtk">
+          <span class="xti">${t.icon}</span>
+          <div class="xti2">
+            <div class="xtn">${t.name}</div>
+            ${def?`<div class="xtno">${def.desc}</div>`:''}
+            ${t.n?`<div class="xtno" style="opacity:.6;margin-top:3px;">📝 ${t.n}</div>`:''}
+          </div>
+          <span class="xck">${t.c?'✅':'❌'}</span>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="xff">🌟 الإنجاز: ${an(done)}/٥ مهام 🌟
+      <div class="xfs">يُنعشني إنجازي | حلقة القرآن الكريم ١٤٤٧</div>
+    </div>`;
+  try{
+    toast('⏳ جاري تحضير البطاقة...');
+    const canvas=await html2canvas(card,{scale:2.8,backgroundColor:null,useCORS:true,logging:false});
+    const a=document.createElement('a');
+    a.download=`إنجاز_${me.name.replace(/\s/g,'_')}_ا${w}_${d}.png`;
+    a.href=canvas.toDataURL('image/png');a.click();
+    toast('✅ تم تصدير البطاقة!');
+  }catch(e){toast('❌ خطأ في التصدير');console.error(e);}
+}
+
+/* ─── UI HELPERS ─── */
+function buildBadges(elId,fn,active=0){
+  const el=document.getElementById(elId);if(!el)return;
+  el.innerHTML=[`<button class="wbdg ${active===0?'active':''}" onclick="(${fn})(0)">الإجمالي</button>`,
+    ...Array.from({length:WEEKS},(_,i)=>`<button class="wbdg ${active===i+1?'active':''}" onclick="(${fn})(${i+1})">أسبوع ${an(i+1)}</button>`)].join('');
+}
+function setBadgeActive(elId,active){
+  document.querySelectorAll(`#${elId} .wbdg`).forEach((b,i)=>b.classList.toggle('active',i===active));
+}
+function swTab(t){
+  document.querySelectorAll('.tabbtn').forEach((b,i)=>b.classList.toggle('active',(t==='l'&&i===0)||(t==='r'&&i===1)));
+  document.getElementById('fL').classList.toggle('hidden',t!=='l');
+  document.getElementById('fR').classList.toggle('hidden',t!=='r');
+}
+function togSup(){document.getElementById('scG').classList.toggle('hidden',document.getElementById('rR').value!=='supervisor');}
+function openMod(html){document.getElementById('mbody').innerHTML=html;document.getElementById('mov').classList.remove('hidden');}
+function closeMod(){document.getElementById('mov').classList.add('hidden');}
+let _t;
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.remove('hidden');clearTimeout(_t);_t=setTimeout(()=>el.classList.add('hidden'),3200);}
+function showErr(id,msg){const el=document.getElementById(id);el.textContent=msg;el.classList.remove('hidden');setTimeout(()=>el.classList.add('hidden'),4000);}
+const v=id=>document.getElementById(id)?.value||'';
+const g=id=>document.getElementById(id);
+function an(n){if(n===null||n===undefined)return'—';return String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);}
+
+/* ─── AUTO ZERO ─── */
+function autoGiveZeros(){
+  const data=getData();
+  const hfs=Object.values(data.users).filter(u=>u.role==='hafiza');
+  if(!hfs.length)return;
+  const eff=getEffectiveDate();eff.setHours(0,0,0,0);
+  let changed=false;
+  for(let w=1;w<=WEEKS;w++){
+    for(let d=1;d<=4;d++){
+      const td=taskDate(w,d);td.setHours(0,0,0,0);
+      if(td>=eff)continue; // skip current day and future
+      hfs.forEach(h=>{
+        const ek=`${h.id}_w${w}_d${d}`;
+        if(!data.entries[ek]?.submitted){
+          data.entries[ek]={hafizaId:h.id,tasks:TASKS.map(t=>({id:t.id,name:t.name,icon:t.icon,c:false,n:''})),submitted:true,at:ts(),autoZero:true};
+          changed=true;
+        }
+      });
+    }
+  }
+  if(changed)save(data);
+}
+
+/* ─── INIT ─── */
+window.onerror=function(msg,src,line){
+  document.getElementById('loadMsg').textContent='❌ خطأ: '+msg+' (سطر '+line+')';
+  return true;
+};
+if(typeof firebase==='undefined'){
+  document.getElementById('loadMsg').textContent='❌ Firebase ما اتحمل — تأكدي من الإنترنت';
+}else{
+  initApp();
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('vLogin').classList.contains('active'))doLogin();});
+</script>
+</body>
+</html>
